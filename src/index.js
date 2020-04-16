@@ -32,7 +32,10 @@ export function instantiate(element, controllerClass, ...childClasses)
         }
     }
 
-    controller.initialize(element);
+    if (controller.initialize)
+    {
+        controller.initialize(element);
+    }
 
     return controller;
 }
