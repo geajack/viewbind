@@ -2,7 +2,7 @@
   "name": "viewbind",
   "version": "1.0.0",
   "description": "Lightweight UI framework",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
