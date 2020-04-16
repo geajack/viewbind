@@ -1,0 +1,15 @@
+{
+  "name": "viewbind",
+  "version": "1.0.0",
+  "description": "Lightweight UI framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "github.com/geajack/viewbind.git"
+  },
+  "author": "Jack",
+  "license": "MIT"
+}
