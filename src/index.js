@@ -1,45 +1,58 @@
 export function instantiate(element, controllerClass, ...childClasses)
 {
-    let controller = new controllerClass();
-
-    for (let target of element.querySelectorAll("[click]"))
+    let controllerClasses = {};
+    controllerClasses[controllerClass.name] = controllerClass;
+    for (let childClass of childClasses)
     {
-        let handlerName = target.getAttribute("click");
-
-        if (controller[handlerName])
-        {
-            target.addEventListener("click", controller[handlerName].bind(controller));
-        }
+        controllerClasses[childClass.name] = childClass;
     }
 
-    for (let target of element.querySelectorAll("[bind]"))
+    let rootController = new controllerClass();
+    let controllerRoots = [new ControllerNode(element, rootController)];
+    while (controllerRoots.length > 0)
     {
-        let name = target.getAttribute("bind");
-        let childControllerClassName = target.getAttribute("controller");
-        if (childControllerClassName)
+        let newControllerRoots = [];
+        for (let controllerRoot of controllerRoots)
         {
-            let childControllerClass;
-            for (let childClass of childClasses)
-            {
-                if (childClass.name === childControllerClassName)
+            let controller = controllerRoot.controller;
+            
+            let walker = document.createTreeWalker(
+                controllerRoot.node,
+                NodeFilter.SHOW_ELEMENT,
+                function(node)
                 {
-                    childControllerClass = childClass;
-                    break;
+                    let bindName = node.getAttribute("bind");
+                    if (bindName !== null)
+                    {
+                        let controllerClassName = node.getAttribute("controller");
+                        if (controllerClassName !== null)
+                        {
+                            let childController = new controllerClasses[controllerClassName]();
+                            controller[bindName] = childController;
+                            newControllerRoots.push(new ControllerNode(node, childController));
+                            return NodeFilter.FILTER_REJECT;
+                        }
+                        else
+                        {
+                            controller[bindName] = node;
+                            return NodeFilter.FILTER_ACCEPT;
+                        }
+                    }
                 }
-            }
-
-            controller[name] = instantiate(target, childControllerClass);
+            );
+            while (walker.nextNode()) {}
         }
-        else
-        {
-            controller[name] = target;
-        }
+        controllerRoots = newControllerRoots;
     }
 
-    if (controller.initialize)
+    return rootController;
+}
+
+class ControllerNode
+{
+    constructor(node, controller)
     {
-        controller.initialize(element);
+        this.node = node;
+        this.controller = controller;
     }
-
-    return controller;
 }
