@@ -12,4 +12,9 @@ class Application
     }
 }
 
-instantiate(document.body, Application);
+class ChildController
+{
+
+}
+
+instantiate(document.body, Application, ChildController);

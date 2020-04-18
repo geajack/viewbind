@@ -4,8 +4,12 @@ export function instantiate(element, controllerClass, ...childClasses)
 
     for (let target of element.querySelectorAll("[click]"))
     {
-        let handler = target.getAttribute("click");
-        target.addEventListener("click", controller[handler].bind(controller));
+        let handlerName = target.getAttribute("click");
+
+        if (controller[handlerName])
+        {
+            target.addEventListener("click", controller[handlerName].bind(controller));
+        }
     }
 
     for (let target of element.querySelectorAll("[bind]"))
