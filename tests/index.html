@@ -7,6 +7,11 @@
     <script src="main.js" type="module" defer></script>
 </head>
 <body>
-    <span id="message"></span>
+    <span bind="parentMessage">Test failed</span>
+    <div bind="child" controller="ChildController">
+        <span bind="childMessage">Test failed</span>
+        <span bind="buttonMessage">Click the button</span>
+        <button click="onClickButton">Click me</button>
+    </div>
 </body>
 </html>
