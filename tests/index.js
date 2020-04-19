@@ -14,7 +14,10 @@ class Application
 
 class ChildController
 {
-
+    initialize()
+    {
+        this.childMessage.textContent = "Test passed";
+    }
 }
 
 instantiate(document.body, Application, ChildController);

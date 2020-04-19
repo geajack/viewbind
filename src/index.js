@@ -7,52 +7,66 @@ export function instantiate(element, controllerClass, ...childClasses)
         controllerClasses[childClass.name] = childClass;
     }
 
-    let rootController = new controllerClass();
-    let controllerRoots = [new ControllerNode(element, rootController)];
-    while (controllerRoots.length > 0)
-    {
-        let newControllerRoots = [];
-        for (let controllerRoot of controllerRoots)
-        {
-            let controller = controllerRoot.controller;
-            
-            let walker = document.createTreeWalker(
-                controllerRoot.node,
-                NodeFilter.SHOW_ELEMENT,
-                function(node)
-                {
-                    let bindName = node.getAttribute("bind");
-                    if (bindName !== null)
-                    {
-                        let controllerClassName = node.getAttribute("controller");
-                        if (controllerClassName !== null)
-                        {
-                            let childController = new controllerClasses[controllerClassName]();
-                            controller[bindName] = childController;
-                            newControllerRoots.push(new ControllerNode(node, childController));
-                            return NodeFilter.FILTER_REJECT;
-                        }
-                        else
-                        {
-                            controller[bindName] = node;
-                            return NodeFilter.FILTER_ACCEPT;
-                        }
-                    }
-                }
-            );
-            while (walker.nextNode()) {}
-        }
-        controllerRoots = newControllerRoots;
-    }
+    let controller = new controllerClass();
 
-    return rootController;
+    solve(
+        element,
+        (name, value) => controller[name] = value,
+        controller.initialize.bind(controller),
+        function buildController(node)
+        {
+            let className = node.getAttribute("controller");
+            return new controllerClasses[className]();
+        }
+    );
 }
 
-class ControllerNode
+function solve(root, bind, initialize, buildController)
 {
-    constructor(node, controller)
-    {
-        this.node = node;
-        this.controller = controller;
-    }
+    let cNodes = [];
+    let walker = document.createTreeWalker(
+        root,
+        NodeFilter.SHOW_ELEMENT,
+        function(node)
+        {
+            if (node === root)
+            {
+                return NodeFilter.FILTER_ACCEPT;
+            }
+            else if (isBNode(node))
+            {
+                let bindingName = node.getAttribute("bind");
+                if (isCNode(node))
+                {
+                    let controller = buildController(node);
+                    bind(bindingName, controller);
+                    solve(
+                        node,
+                        (name, value) => controller[name] = value,
+                        controller.initialize.bind(controller),
+                        buildController
+                    );
+                    return NodeFilter.FILTER_REJECT;
+                }
+                else
+                {
+                    bind(bindingName, node);
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            }
+        }
+    );
+    while (walker.nextNode()) {}
+
+    initialize();
+}
+
+function isCNode(node)
+{
+    return node.getAttribute("controller") != null;
+}
+
+function isBNode(node)
+{
+    return node.getAttribute("bind") != null;
 }
