@@ -11,15 +11,13 @@ export function instantiate(element, controllerClass, ...childClasses)
 
     solve(
         element,
-        (name, value) => controller[name] = value,
-        controller.initialize.bind(controller),
+        controller,
         controllerClasses
     );
 }
 
-function solve(root, bind, initialize, controllerClasses)
+function solve(root, rootController, controllerClasses)
 {
-    let cNodes = [];
     let walker = document.createTreeWalker(
         root,
         NodeFilter.SHOW_ELEMENT,
@@ -38,18 +36,17 @@ function solve(root, bind, initialize, controllerClasses)
                     if (controllerClassName !== null)
                     {
                         let controller = new controllerClasses[controllerClassName]();
-                        bind(bindingName, controller);
+                        rootController[bindingName] = controller;
                         solve(
                             node,
-                            (name, value) => controller[name] = value,
-                            controller.initialize.bind(controller),
+                            controller,
                             controllerClasses
                         );
                         return NodeFilter.FILTER_REJECT;
                     }
                     else
                     {
-                        bind(bindingName, node);
+                        rootController[bindingName] = node;
                         return NodeFilter.FILTER_ACCEPT;
                     }
                 }
@@ -58,5 +55,5 @@ function solve(root, bind, initialize, controllerClasses)
     );
     while (walker.nextNode()) {}
 
-    initialize();
+    rootController.initialize();
 }
