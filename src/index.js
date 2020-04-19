@@ -13,15 +13,11 @@ export function instantiate(element, controllerClass, ...childClasses)
         element,
         (name, value) => controller[name] = value,
         controller.initialize.bind(controller),
-        function buildController(node)
-        {
-            let className = node.getAttribute("controller");
-            return new controllerClasses[className]();
-        }
+        controllerClasses
     );
 }
 
-function solve(root, bind, initialize, buildController)
+function solve(root, bind, initialize, controllerClasses)
 {
     let cNodes = [];
     let walker = document.createTreeWalker(
@@ -38,16 +34,16 @@ function solve(root, bind, initialize, buildController)
                 let bindingName = node.getAttribute("bind");
                 if (bindingName !== null)
                 {
-                    let controllerName = node.getAttribute("controller");
-                    if (controllerName !== null)
+                    let controllerClassName = node.getAttribute("controller");
+                    if (controllerClassName !== null)
                     {
-                        let controller = buildController(node);
+                        let controller = new controllerClasses[controllerClassName]();
                         bind(bindingName, controller);
                         solve(
                             node,
                             (name, value) => controller[name] = value,
                             controller.initialize.bind(controller),
-                            buildController
+                            controllerClasses
                         );
                         return NodeFilter.FILTER_REJECT;
                     }
