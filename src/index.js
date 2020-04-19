@@ -31,6 +31,7 @@ function solve(root, rootController, controllerClasses)
             }
             else
             {
+                let filterResult = NodeFilter.FILTER_ACCEPT;
                 let bindingName = node.getAttribute("bind");
                 if (bindingName !== null)
                 {
@@ -44,14 +45,21 @@ function solve(root, rootController, controllerClasses)
                             controller,
                             controllerClasses
                         );
-                        return NodeFilter.FILTER_REJECT;
+                        filterResult = NodeFilter.FILTER_REJECT;
                     }
                     else
                     {
                         rootController[bindingName] = node;
-                        return NodeFilter.FILTER_ACCEPT;
                     }
                 }
+
+                let clickHandlerName = node.getAttribute("click");
+                if (clickHandlerName !== null)
+                {
+                    node.addEventListener("click", rootController[clickHandlerName].bind(rootController));
+                }
+
+                return filterResult;
             }
         }
     );
