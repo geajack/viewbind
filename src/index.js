@@ -65,5 +65,5 @@ function solve(root, rootController, controllerClasses)
     );
     while (walker.nextNode()) {}
 
-    rootController.initialize();
+    rootController.initialize(root);
 }
