@@ -14,6 +14,8 @@ export function instantiate(element, controllerClass, ...childClasses)
         controller,
         controllerClasses
     );
+
+    return controller;
 }
 
 function solve(root, rootController, controllerClasses)
