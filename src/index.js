@@ -33,25 +33,29 @@ function solve(root, bind, initialize, buildController)
             {
                 return NodeFilter.FILTER_ACCEPT;
             }
-            else if (isBNode(node))
+            else
             {
                 let bindingName = node.getAttribute("bind");
-                if (isCNode(node))
+                if (bindingName !== null)
                 {
-                    let controller = buildController(node);
-                    bind(bindingName, controller);
-                    solve(
-                        node,
-                        (name, value) => controller[name] = value,
-                        controller.initialize.bind(controller),
-                        buildController
-                    );
-                    return NodeFilter.FILTER_REJECT;
-                }
-                else
-                {
-                    bind(bindingName, node);
-                    return NodeFilter.FILTER_ACCEPT;
+                    let controllerName = node.getAttribute("controller");
+                    if (controllerName !== null)
+                    {
+                        let controller = buildController(node);
+                        bind(bindingName, controller);
+                        solve(
+                            node,
+                            (name, value) => controller[name] = value,
+                            controller.initialize.bind(controller),
+                            buildController
+                        );
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    else
+                    {
+                        bind(bindingName, node);
+                        return NodeFilter.FILTER_ACCEPT;
+                    }
                 }
             }
         }
@@ -59,14 +63,4 @@ function solve(root, bind, initialize, buildController)
     while (walker.nextNode()) {}
 
     initialize();
-}
-
-function isCNode(node)
-{
-    return node.getAttribute("controller") != null;
-}
-
-function isBNode(node)
-{
-    return node.getAttribute("bind") != null;
 }
