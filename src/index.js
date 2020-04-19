@@ -54,9 +54,10 @@ function solve(root, rootController, controllerClasses)
                 }
 
                 let clickHandlerName = node.getAttribute("click");
-                if (clickHandlerName !== null)
+                let handler = rootController[clickHandlerName];
+                if (handler)
                 {
-                    node.addEventListener("click", rootController[clickHandlerName].bind(rootController));
+                    node.addEventListener("click", handler.bind(rootController));
                 }
 
                 return filterResult;
@@ -65,5 +66,8 @@ function solve(root, rootController, controllerClasses)
     );
     while (walker.nextNode()) {}
 
-    rootController.initialize(root);
+    if (rootController.initialize)
+    {
+        rootController.initialize(root);
+    }
 }
