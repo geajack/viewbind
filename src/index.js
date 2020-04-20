@@ -1,10 +1,9 @@
 export function instantiate(element, controllerClass, ...childClasses)
 {
     let controllerClasses = {};
-    controllerClasses[controllerClass.name] = controllerClass;
-    for (let childClass of childClasses)
+    for (let classEntity of [controllerClass, ...childClasses])
     {
-        controllerClasses[childClass.name] = childClass;
+        controllerClasses[classEntity.name] = classEntity;
     }
 
     let controller = new controllerClass();
