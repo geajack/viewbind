@@ -8,7 +8,7 @@ export function instantiate(element, controllerClass, ...childClasses)
 
     let controller = new controllerClass();
 
-    solve(
+    bind(
         element,
         controller,
         controllerClasses
@@ -17,7 +17,7 @@ export function instantiate(element, controllerClass, ...childClasses)
     return controller;
 }
 
-function solve(root, rootController, controllerClasses)
+function bind(root, rootController, controllerClasses)
 {
     let walker = document.createTreeWalker(
         root,
@@ -39,7 +39,7 @@ function solve(root, rootController, controllerClasses)
                     {
                         let controller = new controllerClasses[controllerClassName]();
                         rootController[bindingName] = controller;
-                        solve(
+                        bind(
                             node,
                             controller,
                             controllerClasses
