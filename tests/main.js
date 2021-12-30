@@ -16,11 +16,6 @@ class ChildController
     {
         this.childMessage.textContent = "Test passed";
     }
-
-    onClickButton()
-    {
-        this.buttonMessage.textContent = "Test passed";
-    }
 }
 
 instantiate(document.body, Application, ChildController);
