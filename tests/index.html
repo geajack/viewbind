@@ -12,5 +12,14 @@
     <div bind="child" controller="ChildController">
         <span bind="childMessage">Test failed</span>
     </div>
+    <div>
+        <test bind="testComponent" />
+    </div>
+    <div bind="div">
+    </div>
+
+    <template id="testTemplate">
+        <span bind="message">Test failed (template loaded, controller didn't run)</span>
+    </template>
 </body>
 </html>

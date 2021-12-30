@@ -1,4 +1,4 @@
-function bind(node, controllerClass, otherControllerClasses)
+function bind(node, controllerClass, otherControllerClasses, components)
 {
     let controller = new controllerClass();
 
@@ -8,19 +8,70 @@ function bind(node, controllerClass, otherControllerClasses)
         dictOfClasses[controllerClass.name] = controllerClass;
     }
 
-    return bindChild(node, null, controller, dictOfClasses);
+    let dictOfComponents = {};
+    for (let component of components)
+    {
+        dictOfComponents[component.name.toUpperCase()] = component;
+    }
+
+    return bindChild(node, null, controller, dictOfClasses, dictOfComponents);
 }
 
-function bindChild(childNode, parentController, childController, otherControllerClasses)
+function create(component, controllerClasses, otherComponents)
+{
+    let clonedFragment = component.fragment.cloneNode(true); // fail if no fragment
+    let controller = bind(clonedFragment, component.controllerClass, controllerClasses, otherComponents);
+    return controller;
+}
+
+function component(name, htmlFragment, controllerClass)
+{
+    return {
+        name: name,
+        fragment: htmlFragment,
+        controllerClass: controllerClass
+    }
+}
+
+function bindChild(childNode, parentController, childController, controllerClasses, components)
 {
     let nodeOrFragment = childNode;
+    let tagName = childNode.tagName;
+    let isFragment = false;
+
+    if (components[tagName] !== undefined)
+    {
+        let component = components[tagName];
+        if (component.fragment)
+        {
+            nodeOrFragment = component.fragment.cloneNode(true); // todo fail if not empty tag
+            isFragment = true;
+        }
+    }
 
     if (!childController)
     {
+        let controllerClass = null;
         let controllerClassName = childNode.getAttribute("controller");
         if (controllerClassName)
         {
-            let controllerClass = otherControllerClasses[controllerClassName];
+            controllerClass = controllerClasses[controllerClassName]; // still works if we explicitly specify a class that's undefined, should be an error
+        }
+
+        if (!controllerClass)
+        {
+            if (components[tagName] !== undefined)
+            {
+                let component = components[tagName];
+                if (component.controllerClass)
+                {
+                    controllerClass = component.controllerClass;
+                }
+            }
+        }
+        
+        if (controllerClass)
+        {
             childController = new controllerClass();
         }
     }
@@ -45,7 +96,7 @@ function bindChild(childNode, parentController, childController, otherController
             continue;
         }
 
-        let value = bindChild(node, controller, null, otherControllerClasses);
+        let value = bindChild(node, controller, null, controllerClasses, components);
         let bindName = node.getAttribute("bind");
         if (bindName)
         {
@@ -55,7 +106,16 @@ function bindChild(childNode, parentController, childController, otherController
 
     if (childController)
     {
-        childController.initialize(nodeOrFragment);
+        if (childController.initialize)
+        {
+            childController.initialize(nodeOrFragment);
+        }
+    }
+
+    if (isFragment)
+    {
+        childNode.parentNode.insertBefore(nodeOrFragment, childNode); // we assume childNode has a parent
+        childNode.parentNode.removeChild(childNode);
     }
 
     return returnValue;
