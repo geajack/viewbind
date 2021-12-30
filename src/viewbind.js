@@ -1,4 +1,4 @@
-export function instantiate(element, controllerClass, ...childClasses)
+function instantiate(element, controllerClass, ...childClasses)
 {
     let controllerClasses = {};
     for (let classEntity of [controllerClass, ...childClasses])

@@ -1,5 +1,3 @@
-import { instantiate } from "../src/index.js";
-
 class Application
 {
     initialize()
