@@ -18,4 +18,4 @@ class ChildController
     }
 }
 
-instantiate(document.body, Application, ChildController);
+bind(document.body, Application, [ChildController]);

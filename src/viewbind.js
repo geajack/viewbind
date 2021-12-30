@@ -1,72 +1,62 @@
-function instantiate(element, controllerClass, ...childClasses)
+function bind(node, controllerClass, otherControllerClasses)
 {
-    let controllerClasses = {};
-    for (let classEntity of [controllerClass, ...childClasses])
-    {
-        controllerClasses[classEntity.name] = classEntity;
-    }
-
     let controller = new controllerClass();
 
-    bind(
-        element,
-        controller,
-        controllerClasses
-    );
+    let dictOfClasses = {};
+    for (let controllerClass of otherControllerClasses)
+    {
+        dictOfClasses[controllerClass.name] = controllerClass;
+    }
 
-    return controller;
+    return bindChild(node, null, controller, dictOfClasses);
 }
 
-function bind(root, rootController, controllerClasses)
+function bindChild(childNode, parentController, childController, otherControllerClasses)
 {
-    let walker = document.createTreeWalker(
-        root,
-        NodeFilter.SHOW_ELEMENT,
-        function(node)
-        {
-            if (node === root)
-            {
-                return NodeFilter.FILTER_ACCEPT;
-            }
-            else
-            {
-                let filterResult = NodeFilter.FILTER_ACCEPT;
-                let bindingName = node.getAttribute("bind");
-                if (bindingName !== null)
-                {
-                    let controllerClassName = node.getAttribute("controller");
-                    if (controllerClassName !== null)
-                    {
-                        let controller = new controllerClasses[controllerClassName]();
-                        rootController[bindingName] = controller;
-                        bind(
-                            node,
-                            controller,
-                            controllerClasses
-                        );
-                        filterResult = NodeFilter.FILTER_REJECT;
-                    }
-                    else
-                    {
-                        rootController[bindingName] = node;
-                    }
-                }
+    let nodeOrFragment = childNode;
 
-                let clickHandlerName = node.getAttribute("click");
-                let handler = rootController[clickHandlerName];
-                if (handler)
-                {
-                    node.addEventListener("click", handler.bind(rootController));
-                }
-
-                return filterResult;
-            }
-        }
-    );
-    while (walker.nextNode()) {}
-
-    if (rootController.initialize)
+    if (!childController)
     {
-        rootController.initialize(root);
+        let controllerClassName = childNode.getAttribute("controller");
+        if (controllerClassName)
+        {
+            let controllerClass = otherControllerClasses[controllerClassName];
+            childController = new controllerClass();
+        }
     }
+
+    let returnValue;
+    let controller;
+    if (childController)
+    {
+        returnValue = childController;
+        controller = childController;
+    }
+    else
+    {
+        returnValue = nodeOrFragment;
+        controller = parentController;
+    }
+
+    for (let node of nodeOrFragment.childNodes)
+    {
+        if (node.nodeType === Node.TEXT_NODE)
+        {
+            continue;
+        }
+
+        let value = bindChild(node, controller, null, otherControllerClasses);
+        let bindName = node.getAttribute("bind");
+        if (bindName)
+        {
+            controller[bindName] = value;
+        }
+    }
+
+    if (childController)
+    {
+        childController.initialize(nodeOrFragment);
+    }
+
+    return returnValue;
 }
