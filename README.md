@@ -21,7 +21,7 @@ and the following JavaScript:
 ```javascript
 class Controller
 {
-	initialize()
+    initialize()
     {
         this.message.innerText = "Hello, world!";
     }
@@ -63,7 +63,7 @@ The controllers themselves might be defined like this:
 ```javascript
 class CommentController
 {
-	setComment(comment)
+    setComment(comment)
     {
         this.author.innerText = comment.author;
         this.content.innerText = comment.content;
@@ -73,7 +73,7 @@ class CommentController
 
 class DateController
 {
-	setComment(date)
+    setComment(date)
     {
         this.html.innerText = date.toDateString();
     }
@@ -88,7 +88,7 @@ Now we want to make the code for our user comment reusable. We would like to be 
 
 ```html
 <div id="commentContainer">
-	<user-comment bind="comment1"></user-comment>
+    <user-comment bind="comment1"></user-comment>
     <user-comment bind="comment2"></user-comment>
     <user-comment bind="comment3"></user-comment>
 </div>
