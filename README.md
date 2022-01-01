@@ -21,7 +21,7 @@ and the following JavaScript:
 ```javascript
 class Controller
 {
-	initialize()
+    initialize()
     {
         this.message.innerText = "Hello, world!";
     }
