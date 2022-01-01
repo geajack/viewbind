@@ -1,6 +1,6 @@
 # Viewbind
 
-Viewbind is a small JavaScript framework for making web pages. It aims to get some of the benefits out of modern frameworks like Angular and React, while putting a thinner abstraction layer between you and the base JS APIs - an enhancement to vanilla JS, not a replacement for it, but still more powerful than a mere convenience wrapper like JQuery.
+Viewbind is a small JavaScript framework for making web pages. It aims to get some of the benefits out of modern frameworks like Angular and React, while putting a thinner abstraction layer between you and the base JS APIs - an enhancement to vanilla JS, not a replacement for it, but still more powerful than a mere convenience wrapper like JQuery. In particular, the Viewbind philosophy is that there are two main ideas worth taking from Angular and React: the increased synergizing of your HTML markup and your JavaScript, and having a mechanism for building reusable components.
 
 ## What It Does
 
