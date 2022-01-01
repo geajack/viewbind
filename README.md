@@ -73,7 +73,7 @@ class CommentController
 
 class DateController
 {
-    setComment(date)
+    setDate(date)
     {
         this.html.innerText = date.toDateString();
     }
