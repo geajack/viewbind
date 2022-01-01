@@ -82,6 +82,8 @@ function bindChild(childNode, parentController, childController, controllerClass
     {
         returnValue = childController;
         controller = childController;
+        
+        childController.html = nodeOrFragment;
     }
     else
     {
@@ -96,6 +98,11 @@ function bindChild(childNode, parentController, childController, controllerClass
             continue;
         }
 
+        if (node.nodeType === Node.COMMENT_NODE)
+        {
+            continue;
+        }
+
         let value = bindChild(node, controller, null, controllerClasses, components);
         let bindName = node.getAttribute("bind");
         if (bindName)
@@ -104,6 +111,7 @@ function bindChild(childNode, parentController, childController, controllerClass
         }
     }
 
+    
     if (childController)
     {
         if (childController.initialize)

@@ -16,17 +16,12 @@ class ChildController
 {
     initialize()
     {
-        this.childMessage.textContent = "Test passed";
+       this.childMessage.textContent = "Test passed";
     }
 }
 
 class TestComponentController
 {
-    initialize(fragment)
-    {
-        this.fragment = fragment;
-    }
-
     setMessage(message)
     {
         this.message.textContent = message;
@@ -40,4 +35,4 @@ let application = bind(document.body, Application, [ChildController], [testCompo
 
 let myComponent = create(testComponent, [], []);
 myComponent.setMessage("Test passed");
-application.div.appendChild(myComponent.fragment);
+application.div.appendChild(myComponent.html);
