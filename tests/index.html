@@ -56,6 +56,14 @@
         <li><test bind="componentList[]" /></li>
     </ol>
 
+    <h1>Arguments test</h1>
+    <div controller="ArgumentController" vb-value="7">
+        Test failed
+    </div>
+
+    <h1>Arguments w/ components test</h1>
+    <arg-component vb-value="7"></arg-component>
+
     <template id="testTemplate">
         <span bind="message">Test failed (template loaded, controller didn't run)</span>
     </template>

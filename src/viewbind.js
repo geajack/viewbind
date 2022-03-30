@@ -128,7 +128,17 @@ function bindChild(childNode, parentController, childController, controllerClass
     {
         if (childController.initialize)
         {
-            childController.initialize(nodeOrFragment);
+            let parameters = {};
+            for (let attribute of childNode.attributes)
+            {
+                if (attribute.name.startsWith("vb-"))
+                {
+                    let parameterName = attribute.name.slice(3);
+                    parameters[parameterName] = attribute.value;
+                }
+            }
+
+            childController.initialize(nodeOrFragment, parameters);
         }
     }
 
