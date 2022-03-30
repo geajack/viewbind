@@ -4,19 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Viewbind Test</title>
+    <style>
+        body { color : red; }
+        h1 { color : black; }
+    </style>
     <script src="../src/viewbind.js" defer></script>
     <script src="main.js" defer></script>
 </head>
 <body>
+    <h1>Basic test</h1>
     <span bind="parentMessage">Test failed</span>
+    
+    <h1>Child controller test</h1>
     <div bind="child" controller="ChildController">
         <span bind="childMessage">Test failed</span>
     </div>
+    
+    <h1>Component test</h1>
     <div>
         <test bind="testComponent" />
     </div>
+
+    <h1>Programmatic component test</h1>
     <div bind="div">
     </div>
+    
+    <h1>Array test</h1>
+    <ol>
+        <li bind="list[]">Test failed</li>
+        <li bind="list[]">Test failed</li>
+        <li bind="list[]">Test failed</li>
+        <li bind="list[]">Test failed</li>
+        <li bind="list[]">Test failed</li>
+    </ol>
+
+    <h1>Array w/ controllers test</h1>
+    <ol>
+        <li bind="controllerList[]" controller="ChildController"><span bind="childMessage">Test failed</span></li>
+        <li bind="controllerList[]" controller="ChildController"><span bind="childMessage">Test failed</span></li>
+        <li bind="controllerList[]" controller="ChildController"><span bind="childMessage">Test failed</span></li>
+        <li bind="controllerList[]" controller="ChildController"><span bind="childMessage">Test failed</span></li>
+        <li bind="controllerList[]" controller="ChildController"><span bind="childMessage">Test failed</span></li>
+    </ol>
+
+    <h1>Array w/ components test</h1>
+    <ol>
+        <li><test bind="componentList[]" /></li>
+        <li><test bind="componentList[]" /></li>
+        <li><test bind="componentList[]" /></li>
+        <li><test bind="componentList[]" /></li>
+        <li><test bind="componentList[]" /></li>
+    </ol>
 
     <template id="testTemplate">
         <span bind="message">Test failed (template loaded, controller didn't run)</span>

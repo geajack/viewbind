@@ -107,7 +107,19 @@ function bindChild(childNode, parentController, childController, controllerClass
         let bindName = node.getAttribute("bind");
         if (bindName)
         {
-            controller[bindName] = value;
+            if (bindName.endsWith("[]"))
+            {
+                let arrayName = bindName.slice(0, -2);
+                if (controller[arrayName] === undefined)
+                {
+                    controller[arrayName] = new Array();
+                }
+                controller[arrayName].push(value);
+            }
+            else
+            {
+                controller[bindName] = value;
+            }
         }
     }
 
